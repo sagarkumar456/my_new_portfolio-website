@@ -407,12 +407,33 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Lottie.network(
-            'https://assets9.lottiefiles.com/packages/lf20_1LhsaB.json', 
-            fit: BoxFit.contain,
-            width: isMobile ? 200 : 300,
+          // 1. CENTER ME AAPKI GLOWING PHOTO
+          Container(
+            width: isMobile ? 150 : 200,
+            height: isMobile ? 150 : 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.cyanAccent, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.cyanAccent.withOpacity(0.3),
+                  blurRadius: 30,
+                  spreadRadius: 5,
+                ),
+                BoxShadow(
+                  color: Colors.pinkAccent.withOpacity(0.2),
+                  blurRadius: 50,
+                  spreadRadius: 10,
+                ),
+              ],
+              image: const DecorationImage(
+                image: AssetImage('assets/profile.jpg'), // Yahan photo ka naam fix kar diya hai
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           
+          // 2. ORBITING SKILLS AROUND YOU
           AnimatedBuilder(
             animation: _orbitController,
             builder: (context, child) {
@@ -424,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   _buildOrbitingElement(1, totalElements, 'Java', Icons.coffee, Colors.orange, isMobile),
                   _buildOrbitingElement(2, totalElements, 'Automation', Icons.smart_toy, Colors.greenAccent, isMobile),
                   _buildOrbitingElement(3, totalElements, 'Manual', Icons.fact_check, Colors.pinkAccent, isMobile),
-                  _buildOrbitingElement(4, totalElements, 'Me', Icons.person, Colors.cyan, isMobile, isPhoto: true),
+                  _buildOrbitingElement(4, totalElements, 'Flutter', Icons.app_shortcut, Colors.cyan, isMobile), 
                 ],
               );
             },
@@ -472,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               showDialog(
                 context: context,
                 barrierColor: Colors.transparent, 
-                builder: (context) => const ChatWindow(initialMessage: "please share Sagar(sk) num"),
+                builder: (context) => const ChatWindow(initialMessage: "please share sk num"),
               );
             }),
             _buildNeonButton('RESUME ($_downloadCount)', _showDownloadDialog),
@@ -512,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ? const CircleAvatar(
                     radius: 20, 
                     backgroundColor: Colors.transparent, 
-                    backgroundImage: AssetImage('assets/sagar.jpg'), 
+                    backgroundImage: AssetImage('assets/profile.jpg'), // Yahan bhi path fix hai
                   )
                 : Icon(icon, color: color, size: 24),
           ),
@@ -1141,17 +1162,15 @@ class _ChatWindowState extends State<ChatWindow> {
       alignment: Alignment.bottomRight,
       child: Material(
         color: Colors.transparent,
-        // Yahan AnimatedPadding add kiya hai jo keyboard aane par bottom se space dega
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutCubic,
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Container(
-            margin: const EdgeInsets.only(right: 20, bottom: 80, left: 20), // Mobile ke liye left margin bhi zaroori hai
-            // Fixed height aur width ki jagah BoxConstraints use kiya hai taaki responsive rahe
+            margin: const EdgeInsets.only(right: 20, bottom: 80, left: 20), 
             constraints: BoxConstraints(
               maxWidth: 350,
-              maxHeight: MediaQuery.of(context).size.height * 0.65, // Screen height ka 65% se zyada bada nahi hoga
+              maxHeight: MediaQuery.of(context).size.height * 0.65, 
             ),
             decoration: BoxDecoration(
               color: const Color(0xFF0F1423),

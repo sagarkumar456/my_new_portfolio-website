@@ -34,7 +34,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/sagar.jpg
+    - assets/profile.jpg
     - assets/Resume.pdf
    
 dependency_overrides:
