@@ -1141,112 +1141,121 @@ class _ChatWindowState extends State<ChatWindow> {
       alignment: Alignment.bottomRight,
       child: Material(
         color: Colors.transparent,
-        child: Container(
-          margin: const EdgeInsets.only(right: 20, bottom: 80),
-          width: 350,
-          height: 500,
-          decoration: BoxDecoration(
-            color: const Color(0xFF0F1423),
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.cyanAccent, width: 1.5),
-            boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 15)],
-          ),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                decoration: const BoxDecoration(
-                  color: Colors.cyanAccent,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(13), topRight: Radius.circular(13)),
+        // Yahan AnimatedPadding add kiya hai jo keyboard aane par bottom se space dega
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            margin: const EdgeInsets.only(right: 20, bottom: 80, left: 20), // Mobile ke liye left margin bhi zaroori hai
+            // Fixed height aur width ki jagah BoxConstraints use kiya hai taaki responsive rahe
+            constraints: BoxConstraints(
+              maxWidth: 350,
+              maxHeight: MediaQuery.of(context).size.height * 0.65, // Screen height ka 65% se zyada bada nahi hoga
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F1423),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.cyanAccent, width: 1.5),
+              boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 15)],
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                  decoration: const BoxDecoration(
+                    color: Colors.cyanAccent,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(13), topRight: Radius.circular(13)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Elara AI Assistant', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, color: Colors.black),
+                      )
+                    ],
+                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Elara AI Assistant', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.close, color: Colors.black),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(15),
-                  itemCount: _messages.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    
-                    if (index == _messages.length) {
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(15),
+                    itemCount: _messages.length + (_isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      
+                      if (index == _messages.length) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white12,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              "Elara is typing...", 
+                              style: TextStyle(
+                                color: Colors.cyanAccent, 
+                                fontStyle: FontStyle.italic, 
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500
+                              )
+                            ),
+                          ),
+                        );
+                      }
+
+                      final msg = _messages[index];
+                      final isUser = msg['role'] == 'user';
                       return Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white12,
+                            color: isUser ? Colors.cyanAccent.withOpacity(0.15) : Colors.white12,
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: isUser ? Colors.cyanAccent.withOpacity(0.5) : Colors.transparent),
                           ),
-                          child: const Text(
-                            "Elara is typing...", 
-                            style: TextStyle(
-                              color: Colors.cyanAccent, 
-                              fontStyle: FontStyle.italic, 
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500
-                            )
-                          ),
+                          child: Text(msg['text']!, style: TextStyle(color: isUser ? Colors.cyanAccent : Colors.white, fontSize: 14)),
                         ),
                       );
-                    }
-
-                    final msg = _messages[index];
-                    final isUser = msg['role'] == 'user';
-                    return Align(
-                      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isUser ? Colors.cyanAccent.withOpacity(0.15) : Colors.white12,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isUser ? Colors.cyanAccent.withOpacity(0.5) : Colors.transparent),
-                        ),
-                        child: Text(msg['text']!, style: TextStyle(color: isUser ? Colors.cyanAccent : Colors.white, fontSize: 14)),
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Type your message...',
-                          hintStyle: const TextStyle(color: Colors.white54),
-                          filled: true,
-                          fillColor: Colors.black,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.white24)),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.cyanAccent)),
+                
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Type your message...',
+                            hintStyle: const TextStyle(color: Colors.white54),
+                            filled: true,
+                            fillColor: Colors.black,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.white24)),
+                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.cyanAccent)),
+                          ),
+                          onSubmitted: _sendMessage,
                         ),
-                        onSubmitted: _sendMessage,
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () => _sendMessage(_controller.text),
-                      child: const CircleAvatar(backgroundColor: Colors.cyanAccent, child: Icon(Icons.send, color: Colors.black, size: 18)),
-                    )
-                  ],
-                ),
-              )
-            ],
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () => _sendMessage(_controller.text),
+                        child: const CircleAvatar(backgroundColor: Colors.cyanAccent, child: Icon(Icons.send, color: Colors.black, size: 18)),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
