@@ -1,38 +1,137 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="sagar_portfolio">
+  <meta name="apple-mobile-web-app-title" content="portfolio">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>sagar_portfolio</title>
+  <title>Portfolio</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    body, html {
+      background-color: #070B19 !important; 
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    flutter-view, canvas {
+      background-color: transparent !important; 
+    }
+
+    /* LOADING SCREEN CSS */
+    .loading-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #111827 0%, #070B19 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Courier New', Courier, monospace;
+      z-index: 9999; /* Ensure loader stays on top until removed */
+      transition: opacity 0.6s ease-out; /* Smooth fade-out effect */
+    }
+
+    .welcome-text {
+      color: #00ffff;
+      font-size: 40px; 
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      animation: glowUp 2s ease-in-out infinite alternate, slideUp 1s ease-out;
+    }
+
+    .subtitle {
+      color: #ff4081;
+      font-size: 18px;
+      letter-spacing: 6px;
+      font-weight: bold;
+      animation: fadeIn 2s ease-out 0.5s both;
+    }
+
+    @media (max-width: 600px) {
+      .welcome-text { font-size: 22px; letter-spacing: 2px; }
+      .subtitle { font-size: 12px; letter-spacing: 4px; }
+    }
+
+    .loader-container {
+      margin-top: 40px;
+      position: relative;
+      width: 60px;
+      height: 60px;
+      animation: fadeIn 2s ease-out 1s both;
+    }
+
+    .loader-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid transparent;
+      border-top-color: #00ffff;
+      border-radius: 50%;
+      animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+
+    .loader-circle:nth-child(2) {
+      border: 3px solid transparent;
+      border-bottom-color: #ff4081;
+      width: 70%;
+      height: 70%;
+      top: 15%;
+      left: 15%;
+      animation: spin-reverse 1s linear infinite;
+    }
+
+    @keyframes slideUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes glowUp { 0% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.4); } 100% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px #00ffff; } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+  </style>
 </head>
 <body>
+  
+  <!-- LOADING SCREEN HTML (Added ID 'loading-indicator') -->
+  <div id="loading-indicator" class="loading-container">
+    <div class="welcome-text">WELCOME TO PORTFOLIO</div>
+    <div class="subtitle">SOFTWARE ENGINEER</div>
+    
+    <div class="loader-container">
+      <div class="loader-circle"></div>
+      <div class="loader-circle"></div>
+    </div>
+  </div>
+
+  <!-- FLUTTER SCRIPT -->
   <script src="flutter_bootstrap.js" async></script>
+
+  <!-- AUTO-REMOVE LOADER SCRIPT -->
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var loader = document.getElementById('loading-indicator');
+      if (loader) {
+        // Pehle opacity 0 karega (smooth fade out)
+        loader.style.opacity = '0';
+        // 600 milliseconds baad HTML element ko puri tarah delete kar dega
+        setTimeout(function() {
+          loader.remove();
+        }, 600); 
+      }
+    });
+  </script>
 </body>
 </html>
